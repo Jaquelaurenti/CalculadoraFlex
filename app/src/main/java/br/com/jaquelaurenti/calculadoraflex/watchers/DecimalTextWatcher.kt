@@ -49,3 +49,6 @@ class DecimalTextWatcher(editText: EditText, val totalDecimalNumber: Int = 2) :
         editText.addTextChangedListener(this)
     }
 }
+
+
+// a cada vez que o usuario passa pelo edit text, é feita a formatacao através deste método
