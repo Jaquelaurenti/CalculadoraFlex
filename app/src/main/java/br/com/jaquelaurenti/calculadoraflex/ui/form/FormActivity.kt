@@ -35,6 +35,7 @@ class FormActivity : AppCompatActivity() {
         btCalculate.setOnClickListener {
 
             saveCarData()
+
             val proximatela = Intent(this@FormActivity, ResultActivity::class.java)
             proximatela.putExtra("GAS_PRICE", etGasPrice.text.toString().toDouble())
             proximatela.putExtra("ETHANOL_PRICE", etEthanolPrice.text.toString().toDouble())
@@ -64,10 +65,11 @@ class FormActivity : AppCompatActivity() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val carData =
                         dataSnapshot.getValue(CarData::class.java)
-                    etGasPrice.setText(carData?.gasPrice.toString())
-                    etEthanolPrice.setText(carData?.ethanolPrice.toString())
-                    etGasAverage.setText(carData?.gasAverage.toString())
-                    etEthanolAverage.setText(carData?.ethanolAverage.toString())
+                    //Retorno da tela depois quando efetua o calculo
+                    etGasPrice.setText(carData?.gasPrice.toString().format(2))
+                    etEthanolPrice.setText(carData?.ethanolPrice.toString().format(2))
+                    etGasAverage.setText(carData?.gasAverage.toString().format(2))
+                    etEthanolAverage.setText(carData?.ethanolAverage.toString().format(2))
                 }
                 override fun onCancelled(error: DatabaseError) {}
             })
@@ -79,17 +81,25 @@ class FormActivity : AppCompatActivity() {
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean { when (item.getItemId()) {
-        R.id.action_clear -> { clearData()
-            return true }
-        R.id.action_logout -> { logout()
-            return true }
-        else -> return super.onOptionsItemSelected(item) }
+        R.id.action_clear -> {
+            clearData()
+            return true
+
+        }
+        R.id.action_logout -> {
+            logout()
+            return true
+        }
+        else -> return super.onOptionsItemSelected(item)
+    }
     }
 
     private fun logout() { mAuth.signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-        finish() }
-    private fun clearData() { etGasPrice.setText(defaultClearValueText)
+        finish()
+    }
+    private fun clearData() {
+        etGasPrice.setText(defaultClearValueText)
         etEthanolPrice.setText(defaultClearValueText)
         etGasAverage.setText(defaultClearValueText)
         etEthanolAverage.setText(defaultClearValueText)

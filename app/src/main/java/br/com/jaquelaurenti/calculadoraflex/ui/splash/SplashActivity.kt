@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import br.com.jaquelaurenti.calculadoraflex.BuildConfig
 import br.com.jaquelaurenti.calculadoraflex.R
+import br.com.jaquelaurenti.calculadoraflex.ui.form.FormActivity
 import br.com.jaquelaurenti.calculadoraflex.ui.login.LoginActivity
 import br.com.jaquelaurenti.calculadoraflex.utils.RemoteConfig
 import kotlinx.android.synthetic.main.activity_splash.*
@@ -23,6 +24,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        
         RemoteConfig.remoteConfigFetch()
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -45,6 +47,12 @@ class SplashActivity : AppCompatActivity() {
         anim.reset()
         ivLogo.clearAnimation()
         ivLogo.startAnimation(anim)
+
+        Handler().postDelayed({
+            val nextScreen = Intent(this@SplashActivity, FormActivity::class.java)
+            startActivity(nextScreen)
+            finish()
+        }, TEMPO_AGUARDANDO_SPLASHSCREEM)
     }
 
     private fun continueApp() {

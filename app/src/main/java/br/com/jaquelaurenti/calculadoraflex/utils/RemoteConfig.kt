@@ -1,8 +1,8 @@
 package br.com.jaquelaurenti.calculadoraflex.utils
 
+import br.com.jaquelaurenti.calculadoraflex.BuildConfig
 import br.com.jaquelaurenti.calculadoraflex.R
 import com.google.android.gms.tasks.Task
-import com.google.firebase.remoteconfig.BuildConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 
