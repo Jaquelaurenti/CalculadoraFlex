@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import br.com.jaquelaurenti.calculadoraflex.R
+import br.com.jaquelaurenti.calculadoraflex.extensions.format
 import br.com.jaquelaurenti.calculadoraflex.model.CarData
 import br.com.jaquelaurenti.calculadoraflex.ui.login.LoginActivity
 import br.com.jaquelaurenti.calculadoraflex.ui.result.ResultActivity
@@ -21,27 +22,32 @@ import kotlinx.android.synthetic.main.activity_form.*
 class FormActivity : AppCompatActivity() {
     private lateinit var userId: String
     private lateinit var mAuth: FirebaseAuth
-
     private val firebaseReferenceNode = "CarData"
+
     override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form)
         mAuth = FirebaseAuth.getInstance()
         userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
         listenerFirebaseRealtime()
+
         etGasPrice.addTextChangedListener(DecimalTextWatcher(etGasPrice))
         etEthanolPrice.addTextChangedListener(DecimalTextWatcher(etEthanolPrice))
         etGasAverage.addTextChangedListener(DecimalTextWatcher(etGasAverage, 1))
         etEthanolAverage.addTextChangedListener(DecimalTextWatcher(etEthanolAverage, 1))
+
         btCalculate.setOnClickListener {
 
             saveCarData()
 
             val proximatela = Intent(this@FormActivity, ResultActivity::class.java)
+
             proximatela.putExtra("GAS_PRICE", etGasPrice.text.toString().toDouble())
             proximatela.putExtra("ETHANOL_PRICE", etEthanolPrice.text.toString().toDouble())
             proximatela.putExtra("GAS_AVERAGE", etGasAverage.text.toString().toDouble())
-            proximatela.putExtra("ETHANOL_AVERAGE",
-                etEthanolAverage.text.toString().toDouble())
+            proximatela.putExtra("ETHANOL_AVERAGE", etEthanolAverage.text.toString().toDouble())
+
+            //manda para a tela de resultado do calculo
             startActivity(proximatela)
         } }
 
@@ -52,24 +58,25 @@ class FormActivity : AppCompatActivity() {
             etGasAverage.text.toString().toDouble(),
             etEthanolAverage.text.toString().toDouble()
         )
-        FirebaseDatabase.getInstance().getReference(firebaseReferenceNode)
+        FirebaseDatabase.getInstance().getReference(firebaseReferenceNode) // funcionamento offline
             .child(userId)
             .setValue(carData)
     }
 
     private fun listenerFirebaseRealtime() {
         DatabaseUtil.getDatabase()
-            .getReference(firebaseReferenceNode)
+            .getReference(firebaseReferenceNode) // funcionamento offline
             .child(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val carData =
-                        dataSnapshot.getValue(CarData::class.java)
+                    val carData = dataSnapshot.getValue(CarData::class.java)
+
                     //Retorno da tela depois quando efetua o calculo
-                    etGasPrice.setText(carData?.gasPrice.toString().format(2))
-                    etEthanolPrice.setText(carData?.ethanolPrice.toString().format(2))
-                    etGasAverage.setText(carData?.gasAverage.toString().format(2))
-                    etEthanolAverage.setText(carData?.ethanolAverage.toString().format(2))
+
+                    etGasPrice.setText(carData?.gasPrice.toString())
+                    etEthanolPrice.setText(carData?.ethanolPrice.toString())
+                    etGasAverage.setText(carData?.gasAverage.toString())
+                    etEthanolAverage.setText(carData?.ethanolAverage.toString())
                 }
                 override fun onCancelled(error: DatabaseError) {}
             })
@@ -94,7 +101,8 @@ class FormActivity : AppCompatActivity() {
     }
     }
 
-    private fun logout() { mAuth.signOut()
+    private fun logout() {
+        mAuth.signOut()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
