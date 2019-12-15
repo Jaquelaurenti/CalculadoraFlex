@@ -5,8 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.widget.addTextChangedListener
 import br.com.jaquelaurenti.calculadoraflex.R
-import br.com.jaquelaurenti.calculadoraflex.extensions.format
 import br.com.jaquelaurenti.calculadoraflex.model.CarData
 import br.com.jaquelaurenti.calculadoraflex.ui.login.LoginActivity
 import br.com.jaquelaurenti.calculadoraflex.ui.result.ResultActivity
@@ -31,6 +31,7 @@ class FormActivity : AppCompatActivity() {
 
         listenerFirebaseRealtime()
 
+
         etGasPrice.addTextChangedListener(DecimalTextWatcher(etGasPrice))
         etEthanolPrice.addTextChangedListener(DecimalTextWatcher(etEthanolPrice))
         etGasAverage.addTextChangedListener(DecimalTextWatcher(etGasAverage, 1))
@@ -46,6 +47,8 @@ class FormActivity : AppCompatActivity() {
             proximatela.putExtra("ETHANOL_PRICE", etEthanolPrice.text.toString().toDouble())
             proximatela.putExtra("GAS_AVERAGE", etGasAverage.text.toString().toDouble())
             proximatela.putExtra("ETHANOL_AVERAGE", etEthanolAverage.text.toString().toDouble())
+            proximatela.putExtra("NOME_CARRO", etNome.text.toString())
+            proximatela.putExtra("ANO_CARRO", etAno.text.toString())
 
             //manda para a tela de resultado do calculo
             startActivity(proximatela)
@@ -56,7 +59,9 @@ class FormActivity : AppCompatActivity() {
             etGasPrice.text.toString().toDouble(),
             etEthanolPrice.text.toString().toDouble(),
             etGasAverage.text.toString().toDouble(),
-            etEthanolAverage.text.toString().toDouble()
+            etEthanolAverage.text.toString().toDouble(),
+            etNome.text.toString(),
+            etAno.text.toString()
         )
         FirebaseDatabase.getInstance().getReference(firebaseReferenceNode) // funcionamento offline
             .child(userId)
@@ -73,10 +78,12 @@ class FormActivity : AppCompatActivity() {
 
                     //Retorno da tela depois quando efetua o calculo
 
-                    etGasPrice.setText(carData?.gasPrice.toString())
-                    etEthanolPrice.setText(carData?.ethanolPrice.toString())
+                    etGasPrice.setText(carData?.gasPrice.toString().format(2))
+                    etEthanolPrice.setText(carData?.ethanolPrice.toString().format(2))
                     etGasAverage.setText(carData?.gasAverage.toString())
                     etEthanolAverage.setText(carData?.ethanolAverage.toString())
+                    etNome.setText(carData?.nomeCarro)
+                    etAno.setText(carData?.anoCarro)
                 }
                 override fun onCancelled(error: DatabaseError) {}
             })
@@ -111,6 +118,8 @@ class FormActivity : AppCompatActivity() {
         etEthanolPrice.setText(defaultClearValueText)
         etGasAverage.setText(defaultClearValueText)
         etEthanolAverage.setText(defaultClearValueText)
+        etNome.setText(defaultClearValueText)
+        etAno.setText(defaultClearValueText)
     }
 
 
